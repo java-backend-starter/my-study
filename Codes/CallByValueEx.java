@@ -11,6 +11,7 @@ public class CallByValueEx {
     static void change(A obj){
         System.out.println("참조 타입의 객체 변경 함수 실행");
         obj = new A(100, 100);
+        System.out.println("매개변수 obj의 해시코드 : " + System.identityHashCode(obj));
     }
 
     public static void main(String [] args){
