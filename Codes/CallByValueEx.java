@@ -1,15 +1,15 @@
 public class CallByValueEx {
     static void update(int value){
-        System.out.println("ì›ì‹œ íƒ€ì… ê°’ ë³€ê²½ í•¨ìˆ˜ ì‹¤í–‰");
+        System.out.println("¿ø½Ã Å¸ÀÔ °ª º¯°æ ÇÔ¼ö ½ÇÇà");
         value = Integer.MAX_VALUE;
     }
     static void update(A obj){
-        System.out.println("ì°¸ì¡° íƒ€ì… ê°’ ë³€ê²½ í•¨ìˆ˜ ì‹¤í–‰");
+        System.out.println("ÂüÁ¶ Å¸ÀÔ °ª º¯°æ ÇÔ¼ö ½ÇÇà");
         obj.setValue1(Integer.MAX_VALUE);
         obj.setValue2(Integer.MAX_VALUE);
     }
     static void change(A obj){
-        System.out.println("ì°¸ì¡° íƒ€ì…ì˜ ê°ì²´ ë³€ê²½ í•¨ìˆ˜ ì‹¤í–‰");
+        System.out.println("ÂüÁ¶ Å¸ÀÔÀÇ °´Ã¼ º¯°æ ÇÔ¼ö ½ÇÇà");
         obj = new A(100, 100);
     }
 
@@ -19,26 +19,26 @@ public class CallByValueEx {
         A obj1 = new A(10, 10);
         A obj2 = new A(20, 20);
 
-        System.out.println("----- ë³€ê²½ ì „ -----");
+        System.out.println("----- º¯°æ Àü -----");
         System.out.println("a : " + a);
         System.out.println("obj1.getValue1() : " + obj1.getValue1());
         System.out.println("obj1.getValue2() : " + obj1.getValue2());
         System.out.println("obj2.getValue1() : " + obj2.getValue1());
         System.out.println("obj2.getValue2() : " + obj2.getValue2());
-        System.out.println("obj1ì˜ í•´ì‹œì½”ë“œ : " + System.identityHashCode(obj1));
-        System.out.println("obj2ì˜ í•´ì‹œì½”ë“œ : " + System.identityHashCode(obj2));
-        System.out.println("----- í•¨ìˆ˜ ì‹¤í–‰ -----");
+        System.out.println("obj1ÀÇ ÇØ½ÃÄÚµå : " + System.identityHashCode(obj1));
+        System.out.println("obj2ÀÇ ÇØ½ÃÄÚµå : " + System.identityHashCode(obj2));
+        System.out.println("----- ÇÔ¼ö ½ÇÇà -----");
         update(a);
         update(obj1);
         change(obj1);
-        System.out.println("----- ë³€ê²½ í›„ -----");
+        System.out.println("----- º¯°æ ÈÄ -----");
         System.out.println("a : " + a);
         System.out.println("obj1.getValue1() : " + obj1.getValue1());
         System.out.println("obj1.getValue2() : " + obj1.getValue2());
         System.out.println("obj2.getValue1() : " + obj2.getValue1());
         System.out.println("obj2.getValue2() : " + obj2.getValue2());
-        System.out.println("obj1ì˜ í•´ì‹œì½”ë“œ : " + System.identityHashCode(obj1));
-        System.out.println("obj2ì˜ í•´ì‹œì½”ë“œ : " + System.identityHashCode(obj2));
+        System.out.println("obj1ÀÇ ÇØ½ÃÄÚµå : " + System.identityHashCode(obj1));
+        System.out.println("obj2ÀÇ ÇØ½ÃÄÚµå : " + System.identityHashCode(obj2));
     }
 }
 
