@@ -1,0 +1,117 @@
+# @Secured(), @PreAuthorize, @PostAuthorize
+
+---
+
+## 1. 활성화 설정
+
+- 스프링 시큐리티에서 메서드 단위 권한 검증을 사용하려면 설정 클래스에서 반드시 활성화해야 한다.
+
+```java
+// SecurityConfig.java
+@Configuration
+@EnableWebSecurity // 스프링 시큐리티 필터를 스프링 필터체인에 등록
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = true) 
+public class SecurityConfig {
+    // Security 설정 내용 작성
+}
+```
+- @EnableWebSecurity: 스프링 시큐리티 필터 체인을 등록.
+- @EnableMethodSecurity: 메서드 단위 권한 검사를 활성화.
+  - securedEnabled = true → @Secured 애노테이션 사용 가능
+  - prePostEnabled = true → @PreAuthorize, @PostAuthorize 사용 가능
+- 핵심: 이 두 설정을 켜야만 메서드 단위 권한 애노테이션이 동작한다.
+
+---
+
+## 2️. @Secured
+
+- 간단한 권한 검증이 필요할 때 사용한다.
+
+```java
+@Secured("ROLE_ADMIN")
+@GetMapping("/info")
+public @ResponseBody String info() {
+    return "개인정보";
+}
+```
+- @Secured에 지정한 역할(role)이 현재 사용자에게 있으면 메서드 실행 가능.
+- 단점: 표현식(Expression)을 사용할 수 없음 → 단순 역할 기반(Role-based) 권한 검증만 가능.
+- 추천: 간단한 권한 체크 (예: ADMIN만 접근 가능) 시 사용.
+
+---
+
+## 3️. @PreAuthorize, @PostAuthorize
+
+### 메서드 실행 시점 차이
+
+|:---:|:---:|:---:|
+|애노테이션|	실행 시점|설명|
+|@PreAuthorize	|메서드 호출 전	|메서드 실행 전에 권한 검사|
+|@PostAuthorize	|메서드 실행 후	|메서드 실행 후, 반환값을 포함한 권한 검사 가능|
+- @Secured와 비슷하지만 표현식 사용 가능이 핵심 차이점.
+
+### 사용 가능한 표현식(Expression)
+
+
+|표현식	|설명|
+|:---:|:---:|
+|hasRole('ROLE_XXX')	|현재 사용자가 특정 권한을 가진 경우|
+|hasAnyRole('ROLE_X','ROLE_Y')	|현재 사용자가 지정된 권한 중 하나라도 가진 경우|
+|principal	|현재 로그인 사용자 객체(UserDetails 등) 접근|
+|authentication	|SecurityContext의 인증 객체 접근|
+|permitAll	|모든 접근 허용|
+|denyAll	|모든 접근 거부|
+||isAnonymous()	|비로그인 상태(true)|
+|isRememberMe()	|RememberMe 사용자의 경우(true)|
+|isAuthenticated()	|로그인 상태(true)|
+|isFullyAuthenticated()	|익명 또는 RememberMe 사용자가 아닌 경우(true)|
+
+### 예시
+
+#### @PostAuthorize 예시
+
+```java
+@PostAuthorize("isAuthenticated() and (( returnObject.name == principal.name ) or hasRole('ROLE_ADMIN'))")
+@RequestMapping(value = "/{seq}", method = RequestMethod.GET)
+public User getUser(@PathVariable("seq") long seq) {
+    return userService.findOne(seq);
+}
+```
+- returnObject 예약어로 메서드 반환 객체에 접근 가능.
+- 현재 로그인 사용자가 반환 객체의 소유자이거나 ADMIN 권한이 있어야 접근 가능.
+
+####  @PreAuthorize 예시
+
+```java
+@PreAuthorize("#contact.name == authentication.name")
+public void doSomething(Contact contact) {
+    // contact.name과 현재 인증 사용자의 이름이 같아야 실행
+}
+```
+
+- #파라미터명을 통해 메서드 파라미터 접근 가능.
+- 메서드 호출 전에 권한 검증.
+
+---
+
+## 4️. 결론 / 사용 가이드
+
+|상황	|추천 애노테이션|
+|:---:|:---:|
+|단순 역할 기반 권한 체크	| @Secured|
+|파라미터, 반환값 기반 복잡한 권한 체크	|@PreAuthorize / @PostAuthorize|
+
+---
+
+## 5. 요약
+
+- 간단한 권한 → @Secured
+- 복잡한 권한/조건부 접근 → @Pre/PostAuthorize
+- @PreAuthorize는 메서드 실행 전 체크
+- @PostAuthorize는 메서드 실행 후 체크 가능 (반환값 포함)
+
+---
+
+## 참고자료
+
+[@Secured(), @PreAuthorize, @PostAuthorize](https://velog.io/@joon6093/SecuredPreAuthorize-PostAuthorize)
